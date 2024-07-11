@@ -1,9 +1,152 @@
 import customtkinter as ctk
 
 
+# FUNCTION TO DO THE MATHEMATICAL OPEARIONS
+def math_operation(x, y, operator):
+    if operator == "+":
+        return x+y
+    elif operator == "-":
+        return x-y
+    elif operator == "x":
+        return x*y
+    elif operator == "/":
+        # CANNOT DIVISABLE WITH ZERO
+        if x == 0:
+            return 0
+        elif y == 0:
+            return 0
+        else :
+            return x/y
 
+x, y, oper, result = None, None, None, None
+labels = []
+
+# THE BACKEND FUNCTION TO GET THE RESULT
 def get_label(label):
-    print("label :", label)
+    global x, oper, y, labels, result
+    operators = ["+", "-", "x", "/"]
+    funcs = ["all", "one", "="] 
+    
+    length_of_char = 0
+    values_in_labels = [x for x in labels]
+    for value in values_in_labels:
+        if value == None:
+            pass
+        else:
+            value=str(value)
+            length_of_char += len(value)
+    
+    # TO NOT TAKE ANY VALUES AFTER ENTERING 17 VALUES
+    if length_of_char > 17 and label not in funcs:
+        pass
+    
+    elif result != None:
+        if label in operators:
+            y = result
+            result=None
+            oper = label
+        elif label in funcs:
+            if label == "=":
+                pass
+            elif label == "one":
+                result = str(result)
+                result_list = [x for x in result]
+                result_list.pop(-1)
+                result = "".join(result_list)
+            elif label == "all":
+                result = None
+        else:
+            result=None
+            get_label(label)
+    
+    # TO PERFORM NOTHING WHEN NOT ENTERED ANY VALUE   
+    elif x==None and y==None and label in operators:
+        pass
+        
+    elif label in operators or label in funcs:
+        if label in operators:
+            if oper == None:
+                oper = label
+                if y == None:
+                    y = x
+                    x = None
+                else:
+                    pass
+                
+            else:
+                if x==None and label in operators:
+                    oper = label
+                else:
+                    try:
+                        if type(y) == int:
+                            x = int(x)
+                        else:
+                            x, y = int(x), int(y)
+                            
+                    except:
+                        x, y = float(x), float(y)
+                    y = math_operation(x, y, oper)
+                    x, oper = None, label
+                    
+        else: # IF LABEL IS A FUCNTION
+            
+            #  FUNCTION TO REMOVE ALL ENTERED ITEMS  (ALL CLEAR)
+            if label == "all":
+                labels = []
+                x, y, oper = None, None, None
+                
+            # FUNCTION TO REMOVE ONE BY ONE  (CLEAR)
+            elif label == "one":
+                if x != None:
+                    if len(x) >= 2:
+                        list_x = [i for i in x]
+                        list_x.pop(-1)
+                        x = "".join(list_x)
+                    else:
+                        x = None
+                elif oper != None:
+                    oper = None
+                elif y != None:
+                    if len(y) >= 2:
+                        list_y = [i for i in y]
+                        list_y.pop(-1)
+                        y = "".join(list_y)
+                    else:
+                        y = None
+                else:
+                    pass
+                
+            # IF THE ENTERED FUNCTION IS EQUAL  (EQUAL)
+            else:
+                if x != None and y != None:
+                    x_list = [z for z in x]
+                    if "." in x_list or type(y)==float:
+                        x, y = float(x), float(y)
+                    else:
+                        x, y = int(x), int(y)
+                    result = math_operation(y, x, oper) # we are changing the x value to y in the previous step, why so we giving x as second and y as first value
+                    x, y, oper = None, None, None
+                else:
+                    pass
+    
+    # IF . ENTERED BEFORE ENTERING ANY NUMBER
+    elif label == "." and x==None:
+        x = "0."               
+                    
+    else:
+        if x == None:
+            x = label
+        else:
+            x += label
+                    
+
+    labels = [y, oper, x]
+    print("*"*40)
+    print("Labels :", labels)
+    print("dtypes:", type(y), type(x))
+    print("Result :", result)
+    print("*"*40)
+
 
 
 # THE CALCULATOR UI
@@ -22,7 +165,7 @@ def main():
     frame = ctk.CTkFrame(wn, height=100, width=215, fg_color="black")
     frame.place(x=10, y=10)
 
-    # Initialising buttons    
+    # INITIALISING BUTTONS  
     b1 = ctk.CTkButton(master=wn, fg_color="gray", height=50, width=50, corner_radius=7, command=lambda:get_label("1"), text="1", font=("Helvetica", 15))
     b2 = ctk.CTkButton(master=wn, fg_color="gray", height=50, width=50, corner_radius=7, command=lambda:get_label("2"), text="2", font=("Helvetica", 15))
     b3 = ctk.CTkButton(master=wn, fg_color="gray", height=50, width=50, corner_radius=7, command=lambda:get_label("3"), text="3", font=("Helvetica", 15))
@@ -35,18 +178,18 @@ def main():
     b0 = ctk.CTkButton(master=wn, fg_color="gray", height=50, width=50, corner_radius=7, command=lambda:get_label("0"), text="0", font=("Helvetica", 15))
     b00 = ctk.CTkButton(master=wn, fg_color="gray", height=50, width=50, corner_radius=7,command=lambda:get_label("00"), text="00" , font=("Helvetica", 15))
     bp = ctk.CTkButton(master=wn, fg_color="gray", height=50, width=50, corner_radius=7, command=lambda:get_label("."), text='.', font=("Helvetica", 15))
-    # operators
+    # OPERATORS
     be = ctk.CTkButton(master=wn, fg_color="orange", height=105, width=50, corner_radius=7, command=lambda:get_label("="),text='=', font=("Helvetica", 20))
     bdiv = ctk.CTkButton(master=wn, fg_color="orange", height=50, width=50, corner_radius=7, command=lambda:get_label("/"), text='/', font=("Helvetica", 15))
     bmul = ctk.CTkButton(master=wn, fg_color="orange", height=50, width=50, corner_radius=7, command=lambda:get_label("x"), text='x', font=("Helvetica", 15))
     bsub = ctk.CTkButton(master=wn, fg_color="orange", height=50, width=50, corner_radius=7, command=lambda:get_label("-"), text='-', font=("Helvetica", 25))
     badd = ctk.CTkButton(master=wn, fg_color="orange", height=50, width=50, corner_radius=7, command=lambda:get_label("+"), text='+', font=("Helvetica", 20))
-    # clearing buttons
+    # BUTTONS FOR CLEARING
     bac = ctk.CTkButton(master=wn, fg_color="orange", height=50, width=50, corner_radius=7, text="AC", command=lambda:get_label("all"), font=("Helvetica", 15, "bold"))
     bc = ctk.CTkButton(master=wn, fg_color="orange", height=50, width=50, corner_radius=7, text="C", command=lambda:get_label("one"), font=("Helvetica", 15, "bold"))
 
 
-    # placing buttons
+    # PLACING BUTTONS
     b00.place(x=10, y=340)
     b0.place(x=65, y=340)
     bp.place(x=120, y=340)
@@ -75,9 +218,8 @@ def main():
     badd.place(x=120, y=120)
     bsub.place(x=175, y=120)
 
-
-
-
+    # TO RUN ALL CODES
     wn.mainloop()
-    
+
+# CALLING THE FUNCTION    
 main()
