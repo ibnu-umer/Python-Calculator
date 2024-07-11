@@ -1,6 +1,36 @@
 import customtkinter as ctk
 
 
+# FUNCTION TO SHOW THE RESULT TO THE USER
+def show_label(char_list, result):
+    
+    # FRAME TO SHOW THE RESULT
+    frame = ctk.CTkFrame(wn, height=100, width=215, fg_color="black")
+    frame.place(x=10, y=10)
+    
+    # FETCHING THE DATA TO SHOW
+    if result != None:
+        char = str(result)
+    else:
+        char = ""
+        for chr in char_list:
+            if chr == None:
+                pass
+            else:
+                chr = str(chr)
+                char += chr
+    
+    # IF LEN OF ENTERED CHAR IS MORE THAN ENOUGH TO SHOW
+    if char != None:          
+        if len(char) < 14:
+            labels = ctk.CTkLabel(frame, text=char, font=("Helvetica", 24, "bold"))
+            labels.place(x=10, y=50)
+        else:
+            # MAKING THE LABEL SMALLER TO SHOW MORE
+            labels = ctk.CTkLabel(frame, text=char, font=("Helvetica", 18, "bold"))
+            labels.place(x=10, y=50)
+
+
 # FUNCTION TO DO THE MATHEMATICAL OPEARIONS
 def math_operation(x, y, operator):
     if operator == "+":
@@ -11,12 +41,11 @@ def math_operation(x, y, operator):
         return x*y
     elif operator == "/":
         # CANNOT DIVISABLE WITH ZERO
-        if x == 0:
-            return 0
-        elif y == 0:
+        if x == 0 or y == 0:
             return 0
         else :
             return x/y
+
 
 x, y, oper, result = None, None, None, None
 labels = []
@@ -119,11 +148,15 @@ def get_label(label):
             # IF THE ENTERED FUNCTION IS EQUAL  (EQUAL)
             else:
                 if x != None and y != None:
-                    x_list = [z for z in x]
-                    if "." in x_list or type(y)==float:
-                        x, y = float(x), float(y)
+                    if type(y) == int:
+                        x = int(x)
+                    elif type(y)==float:
+                        x = int(x)
                     else:
-                        x, y = int(x), int(y)
+                        try:
+                            x, y = int(x), int(y)
+                        except:
+                            x, y = float(x), float(y)
                     result = math_operation(y, x, oper) # we are changing the x value to y in the previous step, why so we giving x as second and y as first value
                     x, y, oper = None, None, None
                 else:
@@ -141,11 +174,7 @@ def get_label(label):
                     
 
     labels = [y, oper, x]
-    print("*"*40)
-    print("Labels :", labels)
-    print("dtypes:", type(y), type(x))
-    print("Result :", result)
-    print("*"*40)
+    show_label(labels, result)
 
 
 
