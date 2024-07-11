@@ -149,9 +149,12 @@ def get_label(label):
             else:
                 if x != None and y != None:
                     if type(y) == int:
-                        x = int(x)
+                        try:
+                            x = int(x)
+                        except:
+                            x, y = float(x), float(y)
                     elif type(y)==float:
-                        x = int(x)
+                        x = float(x)
                     else:
                         try:
                             x, y = int(x), int(y)
